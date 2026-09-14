@@ -1,63 +1,23 @@
 # Ivy Homes — Property Explorer
 
-A full-stack property browsing application built for the Ivy Homes Software Engineering Internship Assignment (September 2026).
-
-The application integrates with the Ivy Homes Property API and provides property discovery, filtering, listing details, saved listings, rentals, projects, and an insights dashboard.
+A full-stack property exploration web application built for the Ivy Homes Software Engineering Internship Assignment.
 
 ## Features
 
-### Authentication
-- Login using the real Ivy Homes authentication API
-- Session persistence across page refreshes
-- Access-token based authentication
-- Automatic token refresh for longer sessions
-- Logout functionality
-
-### Property Listings
-- Browse property listings
-- Pagination using the API's offset-based pagination
-- Filter listings by:
-  - Locality
-  - Bedrooms
-  - Price range
-  - Furnishing
-- Listing cards with important property information
-- Clear handling of unavailable or inactive listings
-
-### Listing Details
-- Dedicated detail page for every listing
-- Property information including:
-  - Price
-  - Bedrooms
-  - Area
-  - Locality
-  - Furnishing
-  - Contact information
-- Listings are accessible through individual URLs
-
-### Saved Listings
-- Save and unsave properties
-- View all saved listings
-- Saved listings are associated with the logged-in user
-- Saved state persists across page reloads and re-login
-
-### Rentals
-- Browse rental properties
-- Rental filtering
-- Correct handling and display of rental prices
-- Pagination
-
-### Projects
-- Browse property projects
-- Project filtering
-- Correct project price interpretation
-- Correct handling of area units
-- Project listing information
-
-### Insights
-- Dashboard containing useful property-market statistics
-- Insights computed from the available API datasets
-- Highlights data-quality and API inconsistencies discovered during investigation
+- Demo user authentication
+- Secure server-side API key handling
+- Access-token based sessions with automatic token refresh
+- Property listings with pagination
+- Search and property filters
+- Property detail pages
+- Save and unsave listings
+- Saved listings page
+- Rental properties
+- Project listings with filters
+- Insights dashboard
+- Loading, empty and error states
+- Responsive UI
+- API investigation and documented inconsistencies
 
 ## Tech Stack
 
@@ -66,260 +26,227 @@ The application integrates with the Ivy Homes Property API and provides property
 - TypeScript
 - Tailwind CSS
 - Ivy Homes Property API
+- Vercel
+
+## Getting Started
+
+Clone the repository and install dependencies:
+
+    git clone https://github.com/anchi204/ivy-homes-internship.git
+    cd ivy-homes-internship
+    npm install
+
+Create a `.env.local` file in the project root:
+
+    IVY_API_KEY=your_api_key
+
+The API base URL defaults to `https://solve.ivy.homes`.
+
+Start the development server:
+
+    npm run dev
+
+Then open `http://localhost:3000`.
+
+For a production build:
+
+    npm run build
+
+## Demo Login
+
+Use any of the demo accounts provided in the assignment.
+
+    Email: demo1@ivy.homes
+    Password: 9beaaf0375
+
+Other demo accounts:
+
+    demo2@ivy.homes
+    demo3@ivy.homes
 
 ## Project Structure
 
-```text
-ivy-homes-internship/
-│
-├── app/
-│   ├── api/
-│   │   ├── auth/
-│   │   │   ├── login/
-│   │   │   └── logout/
-│   │   ├── saved/
-│   │   └── session/
-│   │
-│   ├── insights/
-│   ├── listings/
-│   │   └── [id]/
-│   ├── login/
-│   ├── projects/
-│   ├── rentals/
-│   └── saved/
-│
-├── components/
-│   ├── ListingCard
-│   ├── ListingFilterBar
-│   ├── LoginForm
-│   ├── LogoutButton
-│   ├── NavLinks
-│   ├── PaginationControls
-│   ├── ProjectCard
-│   ├── ProjectFilterBar
-│   ├── RentalCard
-│   ├── RentalFilterBar
-│   ├── SaveButton
-│   ├── SessionKeepAlive
-│   └── StatCard
-│
-├── lib/
-│   ├── ivy/
-│   │   ├── auth.ts
-│   │   ├── client.ts
-│   │   ├── config.ts
-│   │   ├── format.ts
-│   │   ├── insights.ts
-│   │   ├── listings.ts
-│   │   ├── projects.ts
-│   │   ├── rentals.ts
-│   │   ├── saved.ts
-│   │   └── types.ts
-│   │
-│   ├── session.ts
-│   └── session-shared.ts
-│
-├── analysis/
-│   ├── INVESTIGATION_LOG.md
-│   └── scripts/
-│
-├── README.md
-├── submission.json
-└── package.json
-Prerequisites
-Node.js
-npm
-1. Clone the repository
-git clone https://github.com/anchi204/ivy-homes-internship.git
-cd ivy-homes-internship
-2. Install dependencies
-npm install
-3. Configure environment variables
+    app/
+      api/
+        auth/
+        saved/
+        session/
+      insights/
+      listings/
+      login/
+      projects/
+      rentals/
+      saved/
 
-Create a .env.local file in the project root:
+    components/
+      ListingCard
+      ListingFilterBar
+      LoginForm
+      LogoutButton
+      NavLinks
+      PaginationControls
+      ProjectCard
+      ProjectFilterBar
+      RentalCard
+      RentalFilterBar
+      SaveButton
+      SessionKeepAlive
+      StatCard
+      Header
 
-IVY_API_KEY=your_api_key
+    lib/
+      ivy/
+        auth.ts
+        client.ts
+        config.ts
+        format.ts
+        insights.ts
+        listings.ts
+        projects.ts
+        rentals.ts
+        saved.ts
+        types.ts
+      session.ts
 
-The API base URL defaults to:
+    analysis/
+      INVESTIGATION_LOG.md
+      scripts/
 
-https://solve.ivy.homes
+## API Investigation
 
-The API key should not be committed to the repository.
+The provided API documentation was treated as a reference rather than the source of truth. The live API was tested directly to verify actual request parameters, responses and available endpoints.
 
-4. Run the development server
-npm run dev
+### Important discrepancies found
 
-Open:
+- API authentication requires the `X-API-Key` header.
+- Login returns `access_token`, `refresh_token`, `expires_in` and `refresh_url`; the documented `token` field was not present.
+- The access token expires after approximately 15 minutes, so token refresh handling was implemented.
+- The documented `page` parameter was ignored by the live API. Pagination works using `offset` and `limit`.
+- The effective maximum `limit` was lower than the documented value.
+- Collection responses use fields such as `limit`, `offset`, `count`, `total` and `has_more`.
+- The listings endpoint can return inactive listings with `is_live: false`.
+- The working listing detail route is `/v1/listings/{id}` rather than the documented singular route.
+- The documented `/similar` endpoint was unavailable during testing.
+- The documented analytics summary endpoint was unavailable, so the insights dashboard computes statistics from the available datasets.
+- The documented favourites endpoint was unavailable. The working saved-listings endpoint is `/v1/saved`, using `listing_id`.
+- Some project prices require Lakh/Crore conversion.
+- Some project area values require unit normalization.
 
-http://localhost:3000
-5. Production build
-npm run build
-Demo Authentication
+## Assignment Analysis
 
-The assignment-provided demo accounts can be used to test the application.
+For the assigned New Gurgaon locality, the analysis produced:
 
-Authentication is performed against the real Ivy Homes API rather than using mock users.
+| Metric | Result |
+| --- | ---: |
+| Total listing records | 3500 |
+| Unique properties | 3254 |
+| Active listings | 2792 |
+| Total monthly rent | ₹49,22,000 |
+| Average price/sqft for 2 BHK | ₹14,425.01 |
+| Costliest project | P60060 |
+| Costliest project maximum price | ₹5.83 Crore |
+| Listings created in last 7 days | 129 |
+| Projects with incorrect listing count | 295 |
 
-API Investigation
+Additional data-quality findings:
 
-The API documentation provided with the assignment was treated as a hypothesis rather than the source of truth.
+- 24 corrupt listing IDs were identified.
+- 95 suspected fake listing IDs were identified.
+- API-reported totals differed from the number of records retrievable through pagination.
+- Project prices required normalization because of Lakh/Crore representations.
+- Some project area values required unit conversion.
 
-I first tested the documented endpoints and compared their behaviour with the actual API responses. I then investigated pagination, authentication, filters, units, record counts, relationships between datasets, and data-quality patterns.
+Detailed investigation notes are available in `analysis/INVESTIGATION_LOG.md`.
 
-Some important discrepancies discovered during the investigation were:
+## Data Quality Handling
 
-Authentication
+The application was implemented according to the behaviour observed from the live API.
 
-The documented login response does not match the actual response shape.
+This includes:
 
-The live API returns an access_token, refresh_token, and expires_in, and supports a refresh flow.
+- Handling inactive listings
+- Supporting offset-based pagination
+- Normalizing project prices
+- Handling different area units
+- Handling missing or malformed listing data
+- Showing appropriate empty and error states
+- Computing insights locally when the analytics endpoint was unavailable
 
-Pagination
+## What Turned Out Fine
 
-The API uses offset-based pagination.
+The core functionality required for the assignment was available and usable after testing the live API:
 
-The documented page parameter is ignored by the live API.
+- Demo authentication worked.
+- Listings could be retrieved and paginated.
+- Individual listings could be fetched.
+- Saved-listing functionality was available through `/v1/saved`.
+- Rental and project datasets were available.
+- The required assignment analysis could be reproduced from the available API data.
 
-The maximum accepted/retrievable page size is also lower than the documented maximum.
+The major challenges were inconsistencies between the written API documentation and the actual live API behaviour.
 
-The collection response provides pagination metadata such as:
+## Security
 
-limit
-offset
-count
-total
-has_more
+The Ivy Homes API key is stored only as a server-side environment variable and is never exposed to the browser.
 
-rather than the documented page-based metadata.
+The environment variable used is:
 
-Record Counts
+    IVY_API_KEY=...
 
-The total value reported by the API does not represent every record that can be retrieved through pagination.
+Environment files are excluded from Git through `.gitignore`.
 
-Therefore, the application uses the actual retrievable dataset when calculating the assignment statistics.
-
-Listings
-
-The listings endpoint can return records where is_live is false, despite the documentation describing the endpoint as returning active listings.
-
-The frontend therefore handles inactive records explicitly.
-
-Listing Detail Endpoint
-
-The documented singular listing path does not work as described.
-
-The working endpoint uses:
-
-/v1/listings/{id}
-Saved Listings
-
-The documented favourites endpoint does not match the live API.
-
-Saved listings are available through:
-
-/v1/saved
-
-with the appropriate listing identifier.
-
-Analytics
-
-The documented analytics summary endpoint was not available at the documented path.
-
-The insights dashboard therefore calculates the required statistics directly from the available API datasets.
-
-Units and Prices
-
-Some project and rental values required interpretation based on the actual API data rather than blindly following the documentation.
-
-Project prices were converted from Lakh/Crore representations where required, and area values were handled according to the units actually returned by the API.
-
-Assignment Analysis
-
-The repository contains the API investigation and final assignment answers.
-
-The investigation covered:
-
-Total listing records
-Unique properties
-Active listings
-Corrupt listing records
-Total monthly rent
-Average price per square foot for 2 BHK listings
-Costliest project
-Listings created in the last 7 days
-Fake listings
-Projects with incorrect listing counts
-
-Detailed evidence and investigation notes are available in the analysis/ directory.
-
-Data Quality Findings
-
-The API investigation identified several classes of inconsistencies, including:
-
-Incorrect or incomplete API documentation
-Pagination discrepancies
-Missing documented endpoints
-Undocumented working endpoints
-Incorrect unit descriptions
-Inconsistent record counts
-Inactive records appearing in listing results
-Duplicate or inconsistent property data
-Invalid/corrupt listing records
-Fake listings
-Project listing-count inconsistencies
-
-The findings were reproduced against the live API and documented with supporting evidence rather than being based on assumptions.
-
-Deployment
+## Deployment
 
 The application is deployed using Vercel.
 
-The API key is configured as a server-side environment variable in the deployment environment and is not stored in the source repository.
+For deployment, configure the following environment variable in the Vercel project:
 
-Security
-API credentials are stored in environment variables.
-.env and .env.local files are excluded through .gitignore.
-The API key is not exposed as a hard-coded frontend value.
-Authentication and API communication are handled through the application's server-side routes where appropriate.
-AI Usage
+    IVY_API_KEY
 
-LLM tools were used during development for:
+The API base URL does not need to be configured because the application defaults to:
 
-Initial implementation assistance
-Debugging
-API investigation
-Exploring API/documentation inconsistencies
-Code review and refinement
-Documentation
+    https://solve.ivy.homes
 
-All generated suggestions were reviewed and validated against the actual application and live API behaviour.
+## Git Commit History
 
-What I Would Improve With More Time
+The project was developed incrementally with feature-based commits covering:
 
-With additional development time, I would:
+1. Initial project setup
+2. Authentication and session handling
+3. Property listings and filters
+4. Listing detail page
+5. Saved listings
+6. Rentals and projects
+7. Insights dashboard
+8. API inconsistencies and pagination handling
+9. Assignment analysis and answers
+10. Documentation and submission files
 
-Add automated tests for the API client and filtering logic
-Add more comprehensive loading and error states
-Improve accessibility across all interactive components
-Add richer visualisations to the insights dashboard
-Improve search and sorting capabilities
-Add more detailed property comparison functionality
-Add automated API consistency checks so documentation/API mismatches can be detected more easily
-Improve caching and request deduplication for large datasets
-Repository
+The commit history reflects the progression of the implementation rather than a single final upload.
 
-GitHub repository:
+## AI Usage
 
-https://github.com/anchi204/ivy-homes-internship
+AI assistance was used during development for implementation support, debugging, API reasoning, code review and documentation.
+
+Important API behaviours were independently tested against the live API instead of relying only on the provided documentation.
+
+## What I Would Improve With Two More Days
+
+With additional development time, I would focus on:
+
+- Improving overall UI/UX and visual polish
+- Adding more comprehensive automated tests
+- Improving client and server-side error handling
+- Adding richer filtering and sorting
+- Improving insights visualizations
+- Adding property comparison functionality
+- Better presentation of data-quality anomalies
+- Improving accessibility
+- Optimizing API requests and caching
+- Adding stronger validation for edge cases
+
+## Repository
+
+GitHub: https://github.com/anchi204/ivy-homes-internship
 
 Built for the Ivy Homes Software Engineering Internship Assignment — September 2026.
-
-
-**Bas `README.md` ka pura old content delete → ye pura paste → Save.**
-
-Phir terminal:
-
-```bash
-git add README.md
-git commit -m "Improve project documentation"
-git push
