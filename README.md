@@ -248,5 +248,12 @@ With additional development time, I would focus on:
 ## Repository
 
 GitHub: https://github.com/anchi204/ivy-homes-internship
+## Demo
+
+Live Demo: https://ivy-homes-internship-five.vercel.app/listings
+
+Demo Login:
+- Email: `demo1@ivy.homes`
+- Password: `9beaaf0375`
 
 Built for the Ivy Homes Software Engineering Internship Assignment — September 2026.
